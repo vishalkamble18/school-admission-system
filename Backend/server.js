@@ -1,0 +1,40 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+
+import authRoutes from "./routes/authRoutes.js";
+import admissionRoutes from "./routes/admissionRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import noticeRoutes from "./routes/noticeRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import galleryRoutes from "./routes/galleryRoutes.js";
+import facilityRoutes from "./routes/facilityRoutes.js";
+import leadershipRoutes from "./routes/leadershipRoutes.js";
+
+dotenv.config();
+connectDB();
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
+/* ================= ROUTES ================= */
+app.use("/api/auth", authRoutes);
+app.use("/api/admission", admissionRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/notices", noticeRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/gallery", galleryRoutes);
+app.use("/api/facilities", facilityRoutes);
+app.use("/api/leaders", leadershipRoutes);
+
+app.get("/", (req, res) => {
+  res.send("School Admission API Running");
+});
+
+app.listen(process.env.PORT, () =>
+  console.log(`🚀 Server running on port ${process.env.PORT}`)
+);
