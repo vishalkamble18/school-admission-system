@@ -22,14 +22,13 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5000",
-      "https://school-admission-app.netlify.app/",
+      "https://school-admission-app.netlify.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
-app.options("*", cors());
 
 
 app.use(express.json());
