@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import fileRoutes from "./routes/fileRoutes.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import admissionRoutes from "./routes/admissionRoutes.js";
@@ -34,6 +35,7 @@ app.use(
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+
 /* ================= ROUTES ================= */
 app.use("/api/auth", authRoutes);
 app.use("/api/admission", admissionRoutes);
@@ -44,6 +46,8 @@ app.use("/api/gallery", galleryRoutes);
 app.use("/api/facilities", facilityRoutes);
 app.use("/api/leaders", leadershipRoutes);
 
+
+app.use("/file", fileRoutes);
 app.get("/", (req, res) => {
   res.send("School Admission API Running");
 });

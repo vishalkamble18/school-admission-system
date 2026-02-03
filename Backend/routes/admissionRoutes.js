@@ -1,36 +1,30 @@
 import express from "express";
 import { protect } from "../middleware/authMiddleware.js";
-// import { upload } from "../middleware/uploadMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
+import {
+  submitAdmission,
+  myAdmission,
+  updateProfile
+} from "../controllers/admissionController.js";
 
-import { submitAdmission, myAdmission } from "../controllers/admissionController.js";
-import { updateProfile } from "../controllers/admissionController.js";
-import { updatePhoto } from "../controllers/admissionController.js";
-import { updateBirthCertificate } from "../controllers/admissionController.js";
 
 const router = express.Router();
 
+/* Submit admission with GridFS files */
 router.post(
   "/submit",
   protect,
-  upload.fields([{ name: "photo" }, { name: "birthCertificate" }]),
+  upload.fields([
+    { name: "photo", maxCount: 1 },
+    { name: "birthCertificate", maxCount: 1 },
+  ]),
   submitAdmission
 );
 
+/* Get logged-in student's admission */
 router.get("/me", protect, myAdmission);
-router.put("/update/:id", protect, updateProfile);
-router.put(
-  "/update-photo/:id",
-  protect,
-  upload.single("photo"),
-  updatePhoto
-);
 
-router.put(
-  "/update-certificate/:id",
-  protect,
-  upload.single("birthCertificate"),
-  updateBirthCertificate
-);
+/* Update only text fields (no files) */
+router.put("/update/:id", protect, updateProfile);
 
 export default router;
