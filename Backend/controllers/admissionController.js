@@ -49,4 +49,42 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+/* ================= UPDATE PHOTO ================= */
+export const updatePhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Photo missing" });
+    }
+
+    const admission = await Admission.findByIdAndUpdate(
+      req.params.id,
+      { photo: req.file.path }, // Cloudinary URL
+      { new: true }
+    );
+
+    res.json(admission);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* ================= UPDATE CERTIFICATE ================= */
+export const updateCertificate = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Certificate missing" });
+    }
+
+    const admission = await Admission.findByIdAndUpdate(
+      req.params.id,
+      { birthCertificate: req.file.path }, // Cloudinary URL
+      { new: true }
+    );
+
+    res.json(admission);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 

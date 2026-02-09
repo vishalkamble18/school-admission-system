@@ -8,6 +8,7 @@ export default function Profile() {
   const [form, setForm] = useState({});
   const [uploading, setUploading] = useState(false);
 
+  /* ================= LOAD PROFILE ================= */
   const loadProfile = async () => {
     try {
       const res = await api.get("/admission/me");
@@ -22,14 +23,16 @@ export default function Profile() {
     loadProfile();
   }, []);
 
+  /* ================= HANDLE TEXT CHANGE ================= */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  /* ================= SAVE PROFILE (TEXT ONLY) ================= */
   const saveProfile = async () => {
     try {
       await api.put(`/admission/update/${profile._id}`, form);
-      toast.success("Profile updated successfully");
+      toast.success("Profile updated");
       setEdit(false);
       loadProfile();
     } catch {
@@ -37,9 +40,10 @@ export default function Profile() {
     }
   };
 
-  // ✅ Upload profile photo
+  /* ================= UPLOAD PHOTO ================= */
   const uploadPhoto = async (file) => {
     if (!file) return;
+
     try {
       setUploading(true);
       const data = new FormData();
@@ -55,9 +59,10 @@ export default function Profile() {
     }
   };
 
-  // ✅ Upload birth certificate
+  /* ================= UPLOAD CERTIFICATE ================= */
   const uploadCertificate = async (file) => {
     if (!file) return;
+
     try {
       setUploading(true);
       const data = new FormData();
@@ -76,75 +81,70 @@ export default function Profile() {
   if (!profile) return <p className="p-6">Loading...</p>;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow rounded">
-      <h2 className="text-2xl font-bold mb-4">👤 My Profile</h2>
+    <div className="p-8 max-w-4xl mx-auto bg-white shadow rounded">
+      <h2 className="text-2xl font-bold mb-6">👤 My Profile</h2>
 
-      {/* Profile Fields */}
+      {/* ================= BASIC INFO ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ProfileField
           label="Full Name"
           name="fullName"
-          edit={edit}
           value={form.fullName}
+          edit={edit}
           onChange={handleChange}
         />
 
         <ProfileField
           label="Mobile"
           name="mobile"
-          edit={edit}
           value={form.mobile}
+          edit={edit}
           onChange={handleChange}
         />
 
         <ProfileField
           label="Address"
           name="address"
-          edit={edit}
           value={form.address}
+          edit={edit}
           onChange={handleChange}
         />
 
         <ProfileField
           label="Class"
           name="classApplying"
-          edit={edit}
           value={form.classApplying}
+          edit={edit}
           onChange={handleChange}
         />
 
         <ProfileField
           label="Guardian"
           name="guardianName"
-          edit={edit}
           value={form.guardianName}
+          edit={edit}
           onChange={handleChange}
         />
       </div>
 
-      {/* Document Viewer */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        {/* Profile Photo */}
+      {/* ================= DOCUMENTS ================= */}
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
         <DocumentCard
           title="Profile Photo"
           src={profile.photo}
-          editable
-          uploading={uploading}
           onUpload={uploadPhoto}
+          uploading={uploading}
         />
 
-        {/* Birth Certificate */}
         <DocumentCard
           title="Birth Certificate"
           src={profile.birthCertificate}
-          editable
-          uploading={uploading}
           onUpload={uploadCertificate}
+          uploading={uploading}
         />
       </div>
 
-      {/* Buttons */}
+      {/* ================= ACTION BUTTONS ================= */}
       <div className="mt-6 flex gap-3">
         {!edit ? (
           <button
@@ -175,7 +175,7 @@ export default function Profile() {
   );
 }
 
-/* ================= COMPONENTS ================= */
+/* ================= SUB COMPONENTS ================= */
 
 const ProfileField = ({ label, name, value, edit, onChange }) => (
   <div>
@@ -185,7 +185,7 @@ const ProfileField = ({ label, name, value, edit, onChange }) => (
         name={name}
         value={value || ""}
         onChange={onChange}
-        className="input"
+        className="input w-full"
       />
     ) : (
       <p className="mt-1">{value || "-"}</p>
@@ -193,13 +193,13 @@ const ProfileField = ({ label, name, value, edit, onChange }) => (
   </div>
 );
 
-const DocumentCard = ({ title, src, editable, onUpload, uploading }) => (
-  <div className="border rounded shadow p-4 text-center dark:bg-gray-700">
+const DocumentCard = ({ title, src, onUpload, uploading }) => (
+  <div className="border rounded shadow p-4 text-center">
     <h3 className="font-semibold mb-3">{title}</h3>
 
     {src ? (
       <img
-        src={`http://localhost:5000/${src}`}
+        src={src}     // ✅ Cloudinary URL directly
         alt={title}
         className="h-48 mx-auto object-contain rounded mb-3"
       />
@@ -207,20 +207,15 @@ const DocumentCard = ({ title, src, editable, onUpload, uploading }) => (
       <p className="text-gray-400 mb-3">No document uploaded</p>
     )}
 
-    {/* Upload Button */}
-    {editable && (
-      <>
-        <input
-          type="file"
-          accept="image/*"
-          className="mb-2"
-          onChange={(e) => onUpload(e.target.files[0])}
-        />
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => onUpload(e.target.files[0])}
+      className="mb-2"
+    />
 
-        {uploading && (
-          <p className="text-sm text-blue-500">Uploading...</p>
-        )}
-      </>
+    {uploading && (
+      <p className="text-sm text-blue-500">Uploading...</p>
     )}
   </div>
 );

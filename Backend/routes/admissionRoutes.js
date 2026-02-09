@@ -4,12 +4,14 @@ import upload from "../middleware/uploadMiddleware.js";
 import {
   submitAdmission,
   myAdmission,
-  updateProfile
+  updateProfile,
+  updatePhoto,
+  updateCertificate
 } from "../controllers/admissionController.js";
 
 const router = express.Router();
 
-/* ================= SUBMIT ADMISSION ================= */
+/* Submit admission */
 router.post(
   "/submit",
   protect,
@@ -20,10 +22,26 @@ router.post(
   submitAdmission
 );
 
-/* ================= GET MY ADMISSION ================= */
+/* Get my admission */
 router.get("/me", protect, myAdmission);
 
-/* ================= UPDATE PROFILE (TEXT ONLY) ================= */
+/* Update text fields */
 router.put("/update/:id", protect, updateProfile);
+
+/* ✅ UPDATE PROFILE PHOTO */
+router.put(
+  "/update-photo/:id",
+  protect,
+  upload.single("photo"),
+  updatePhoto
+);
+
+/* ✅ UPDATE BIRTH CERTIFICATE */
+router.put(
+  "/update-certificate/:id",
+  protect,
+  upload.single("birthCertificate"),
+  updateCertificate
+);
 
 export default router;
