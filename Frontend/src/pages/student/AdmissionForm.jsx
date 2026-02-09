@@ -43,17 +43,24 @@ export default function AdmissionForm() {
     return (
       <div className="text-center py-20">
         <h2 className="text-3xl font-bold text-green-600">
-          🎉 Application Submitted!
+          🎉 Application Submitted Successfully!
         </h2>
       </div>
     );
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto p-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-4xl mx-auto p-6"
+    >
       <h2 className="text-2xl font-bold mb-4">📝 Admission Form</h2>
 
-      <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow">
+      <form
+        onSubmit={submit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow"
+      >
 
         <Field label="Full Name" name="fullName" error={errors.fullName} />
         <Field label="Mobile Number" name="mobile" error={errors.mobile} />
@@ -68,10 +75,26 @@ export default function AdmissionForm() {
         <Field label="Parent Name" name="guardianName" />
         <Field label="Address" name="address" />
 
-        <Upload label="Photo" name="photo" preview={photoPreview} onPreview={setPhotoPreview} error={errors.photo} />
-        <Upload label="Birth Certificate" name="birthCertificate" preview={certPreview} onPreview={setCertPreview} error={errors.birthCertificate} />
+        <Upload
+          label="Photo"
+          name="photo"
+          preview={photoPreview}
+          onPreview={setPhotoPreview}
+          error={errors.photo}
+        />
 
-        <button disabled={loading} className="md:col-span-2 bg-green-600 text-white py-3 rounded-lg">
+        <Upload
+          label="Birth Certificate"
+          name="birthCertificate"
+          preview={certPreview}
+          onPreview={setCertPreview}
+          error={errors.birthCertificate}
+        />
+
+        <button
+          disabled={loading}
+          className="md:col-span-2 bg-green-600 text-white py-3 rounded-lg"
+        >
           {loading ? "Submitting..." : "Submit"}
         </button>
 
@@ -80,23 +103,25 @@ export default function AdmissionForm() {
   );
 }
 
+/* ================= REUSABLE COMPONENTS ================= */
+
 const Field = ({ label, name, error }) => (
   <div>
-    <label>{label}</label>
+    <label className="block font-medium">{label}</label>
     <input name={name} className="input w-full" />
-    {error && <p className="text-red-500">{error}</p>}
+    {error && <p className="text-red-500 text-sm">{error}</p>}
   </div>
 );
 
 const Upload = ({ label, name, preview, onPreview, error }) => (
   <div>
-    <label>{label}</label>
+    <label className="block font-medium">{label}</label>
     <input
       type="file"
       name={name}
       onChange={(e) => onPreview(URL.createObjectURL(e.target.files[0]))}
     />
-    {preview && <img src={preview} className="h-20 mt-2" />}
-    {error && <p className="text-red-500">{error}</p>}
+    {preview && <img src={preview} className="h-20 mt-2 rounded" />}
+    {error && <p className="text-red-500 text-sm">{error}</p>}
   </div>
 );

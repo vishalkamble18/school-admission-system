@@ -7,10 +7,9 @@ import {
   updateProfile
 } from "../controllers/admissionController.js";
 
-
 const router = express.Router();
 
-/* Submit admission with GridFS files */
+/* ================= SUBMIT ADMISSION ================= */
 router.post(
   "/submit",
   protect,
@@ -21,10 +20,10 @@ router.post(
   submitAdmission
 );
 
-/* Get logged-in student's admission */
+/* ================= GET MY ADMISSION ================= */
 router.get("/me", protect, myAdmission);
 
-/* Update only text fields (no files) */
+/* ================= UPDATE PROFILE (TEXT ONLY) ================= */
 router.put("/update/:id", protect, updateProfile);
 
 export default router;

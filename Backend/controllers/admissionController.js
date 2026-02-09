@@ -3,20 +3,26 @@ import Admission from "../models/Admission.js";
 /* ================= SUBMIT ADMISSION ================= */
 export const submitAdmission = async (req, res) => {
   try {
+
     if (!req.files?.photo || !req.files?.birthCertificate) {
-      return res.status(400).json({ message: "Files missing" });
+      return res.status(400).json({ message: "Photo or Birth Certificate missing" });
     }
 
     const admission = await Admission.create({
       studentId: req.user.id,
       ...req.body,
-      photo: req.files.photo[0].path,              // ✅ Cloudinary URL
-      birthCertificate: req.files.birthCertificate[0].path, // ✅ Cloudinary URL
+      photo: req.files.photo[0].path,                // ✅ Cloudinary URL
+      birthCertificate: req.files.birthCertificate[0].path // ✅ Cloudinary URL
     });
 
-    res.json({ message: "Admission submitted", admission });
+    return res.status(201).json({
+      message: "Admission submitted successfully",
+      admission
+    });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("ADMISSION ERROR:", error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -43,3 +49,4 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
