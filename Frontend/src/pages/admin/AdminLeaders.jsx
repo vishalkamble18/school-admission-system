@@ -6,7 +6,7 @@ export default function AdminLeaders() {
   const [form, setForm] = useState({
     name: "",
     role: "Founder",
-    image: null
+    image: null,
   });
 
   useEffect(() => {
@@ -14,26 +14,35 @@ export default function AdminLeaders() {
   }, []);
 
   const fetchLeaders = async () => {
-    const res = await api.get("/leaders");
-    setLeaders(res.data);
+    try {
+      const res = await api.get("/leaders");
+      setLeaders(res.data);
+    } catch (err) {
+      console.error("Fetch leaders error:", err);
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const data = new FormData();
-    data.append("name", form.name);
-    data.append("role", form.role);
-    data.append("image", form.image);
+  const data = new FormData();
+  data.append("name", form.name);
+  data.append("role", form.role);
+  data.append("photo", form.image);
 
-    await api.post("/leaders", data);
-    setForm({ name: "", role: "Founder", image: null });
-    fetchLeaders();
-  };
+  await api.post("/leaders", data);
+
+  setForm({ name: "", role: "Founder", image: null });
+  fetchLeaders();
+};
 
   const deleteLeader = async (id) => {
-    await api.delete(`/leaders/${id}`);
-    fetchLeaders();
+    try {
+      await api.delete(`/leaders/${id}`);
+      fetchLeaders();
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
   };
 
   return (
@@ -65,8 +74,11 @@ export default function AdminLeaders() {
 
         <input
           type="file"
+          accept="image/*"
           className="w-full mb-3"
-          onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+          onChange={(e) =>
+            setForm({ ...form, image: e.target.files[0] })
+          }
           required
         />
 
@@ -83,7 +95,8 @@ export default function AdminLeaders() {
             className="bg-white rounded-xl shadow p-4 text-center"
           >
             <img
-              src={`http://localhost:5000/${l.image}`}
+              src={l.image}   // ✅ Cloudinary URL
+              alt={l.name}
               className="w-24 h-24 mx-auto rounded-full object-cover mb-2"
             />
             <h3 className="font-semibold">{l.name}</h3>

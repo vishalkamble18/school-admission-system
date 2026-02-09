@@ -1,6 +1,3 @@
-
-
-
 import mongoose from "mongoose";
 
 const admissionSchema = new mongoose.Schema({
@@ -17,8 +14,9 @@ const admissionSchema = new mongoose.Schema({
   guardianName: String,
   address: String,
 
-  photoFileId: mongoose.Schema.Types.ObjectId,
-  birthCertificateFileId: mongoose.Schema.Types.ObjectId,
+  photo: String,
+  birthCertificate: String,
+
 
   status: { type: String, default: "Pending" },
 }, { timestamps: true });

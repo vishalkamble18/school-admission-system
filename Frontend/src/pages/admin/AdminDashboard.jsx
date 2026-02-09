@@ -22,7 +22,7 @@ import AdminSidebar from "../../components/AdminSidebar";
 export default function AdminDashboard() {
   const location = useLocation();
 
-  // ✅ Detect /admin (dashboard home)
+  // Dashboard only on /admin
   const isDashboardHome = location.pathname === "/admin";
 
   const [stats, setStats] = useState({
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
     });
   }, []);
 
-  const data = [
+  const chartData = [
     { name: "Pending", value: stats.pending },
     { name: "Approved", value: stats.approved },
     { name: "Rejected", value: stats.rejected }
@@ -60,13 +60,10 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <AdminSidebar />
 
-      {/* RIGHT SIDE */}
+      {/* Right side */}
       <div className="flex-1 p-8">
-
-        {/* 🔑 CHILD ROUTES RENDER HERE */}
         <Outlet />
 
-        {/* 🔑 DASHBOARD ONLY FOR /admin */}
         {isDashboardHome && (
           <motion.div
             initial={{ opacity: 0, x: 40 }}
@@ -83,7 +80,7 @@ export default function AdminDashboard() {
               </p>
             </div>
 
-            {/* Stats Cards */}
+            {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
               <StatCard label="Total Applications" value={stats.total} icon={<Users size={28} />} gradient="from-blue-500 to-indigo-600" />
               <StatCard label="Pending" value={stats.pending} icon={<Clock size={28} />} gradient="from-yellow-400 to-orange-500" />
@@ -91,36 +88,54 @@ export default function AdminDashboard() {
               <StatCard label="Rejected" value={stats.rejected} icon={<XCircle size={28} />} gradient="from-red-500 to-pink-600" />
             </div>
 
-            {/* Charts + Table */}
+            {/* Chart + Table */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+
+              {/* PIE CHART (FIXED HEIGHT) */}
               <div className="bg-white/80 rounded-2xl shadow-xl p-6">
-                <h2 className="font-semibold text-lg mb-4">📈 Applications Overview</h2>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={data} dataKey="value" innerRadius={60} outerRadius={100} label>
-                        {data.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+                <h2 className="font-semibold text-lg mb-4">
+                  📈 Applications Overview
+                </h2>
+
+                <ResponsiveContainer width="100%" height={320}>
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      innerRadius={60}
+                      outerRadius={100}
+                      label
+                    >
+                      {chartData.map((_, i) => (
+                        <Cell key={i} fill={COLORS[i]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
 
+              {/* Recent Applications */}
               <div className="bg-white/80 rounded-2xl shadow-xl p-6">
-                <h2 className="font-semibold text-lg mb-4">🧾 Recent Applications</h2>
+                <h2 className="font-semibold text-lg mb-4">
+                  🧾 Recent Applications
+                </h2>
+
                 <table className="w-full text-sm">
                   <tbody>
                     {applications.map(app => (
                       <tr key={app._id}>
-                        <td>{app.fullName}</td>
+                        <td className="py-2">{app.fullName}</td>
                         <td>{app.classApplying}</td>
-                        <td><StatusBadge status={app.status} /></td>
+                        <td>
+                          <StatusBadge status={app.status} />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+
             </div>
           </motion.div>
         )}

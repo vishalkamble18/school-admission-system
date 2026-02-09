@@ -11,8 +11,12 @@ export default function FacilitiesAdmin() {
   const [images, setImages] = useState([]);
 
   const load = async () => {
-    const res = await api.get("/facilities");
-    setFacilities(res.data);
+    try {
+      const res = await api.get("/facilities");
+      setFacilities(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -24,7 +28,7 @@ export default function FacilitiesAdmin() {
       const data = new FormData();
       data.append("title", title);
       data.append("description", description);
-      [...images].forEach(img => data.append("images", img));
+      [...images].forEach((img) => data.append("images", img));
 
       await api.post("/facilities", data);
       toast.success("✅ Facility added");
@@ -33,15 +37,21 @@ export default function FacilitiesAdmin() {
       setDescription("");
       setImages([]);
       load();
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("❌ Upload failed");
     }
   };
 
   const remove = async (id) => {
     if (!confirm("Delete facility?")) return;
-    await api.delete(`/facilities/${id}`);
-    load();
+    try {
+      await api.delete(`/facilities/${id}`);
+      load();
+    } catch (err) {
+      console.error(err);
+      toast.error("❌ Delete failed");
+    }
   };
 
   return (
@@ -56,35 +66,35 @@ export default function FacilitiesAdmin() {
 
       {/* ================= FORM ================= */}
       <div className="bg-white rounded-2xl shadow p-6 mb-10">
-
         <div className="grid md:grid-cols-4 gap-4">
-
           <input
             placeholder="Facility Title"
             className="border rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
             value={title}
-            onChange={e => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
           />
 
           <input
             placeholder="Short Description"
             className="border rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
           />
 
           {/* Upload */}
-          <label className="flex items-center justify-center gap-2 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition relative">
+          <label className="flex items-center justify-center gap-2 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition">
             <ImagePlus size={18} />
             <span className="text-sm">
-              {images.length > 0 ? `${images.length} files selected` : "Choose Images"}
+              {images.length > 0
+                ? `${images.length} files selected`
+                : "Choose Images"}
             </span>
 
             <input
               type="file"
               multiple
               hidden
-              onChange={e => setImages(e.target.files)}
+              onChange={(e) => setImages(e.target.files)}
             />
           </label>
 
@@ -95,7 +105,6 @@ export default function FacilitiesAdmin() {
             <UploadCloud size={18} />
             Add Facility
           </button>
-
         </div>
 
         {/* Image Preview */}
@@ -115,8 +124,7 @@ export default function FacilitiesAdmin() {
 
       {/* ================= FACILITY GRID ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-
-        {facilities.map(f => (
+        {facilities.map((f) => (
           <motion.div
             whileHover={{ scale: 1.03 }}
             key={f._id}
@@ -124,9 +132,9 @@ export default function FacilitiesAdmin() {
           >
             {/* Image */}
             <img
-              src={`http://localhost:5000/${f.images?.[0]}`}
+              src={f.images?.[0]}   // ✅ FIXED HERE
               className="h-44 w-full object-cover"
-              alt=""
+              alt={f.title}
             />
 
             {/* Content */}
@@ -145,16 +153,13 @@ export default function FacilitiesAdmin() {
             </div>
           </motion.div>
         ))}
-
       </div>
 
-      {/* Empty State */}
       {facilities.length === 0 && (
         <p className="text-center text-gray-500 mt-10">
           No facilities added yet.
         </p>
       )}
-
     </motion.div>
   );
 }

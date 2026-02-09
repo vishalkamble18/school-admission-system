@@ -14,7 +14,10 @@ export default function Facilities() {
   const [facilities, setFacilities] = useState([]);
 
   useEffect(() => {
-    api.get("/facilities").then(res => setFacilities(res.data));
+    api
+      .get("/facilities")
+      .then((res) => setFacilities(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   const icons = [
@@ -28,7 +31,6 @@ export default function Facilities() {
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10">
-      
       {/* Page Title */}
       <motion.h1
         initial={{ opacity: 0, y: -30 }}
@@ -40,7 +42,6 @@ export default function Facilities() {
 
       {/* Facilities Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-
         {facilities.map((f, index) => (
           <motion.div
             key={f._id}
@@ -49,13 +50,12 @@ export default function Facilities() {
           >
             {/* Main Image */}
             <img
-              src={`http://localhost:5000/${f.images?.[0]}`}
+              src={f.images?.[0]}   // ✅ FIXED
               className="h-48 w-full object-cover"
               alt={f.title}
             />
 
             <div className="p-5">
-
               {/* Icon */}
               <div className="text-blue-600 flex justify-center mb-3">
                 {icons[index % icons.length]}
@@ -76,7 +76,7 @@ export default function Facilities() {
                 {f.images.map((img, i) => (
                   <img
                     key={i}
-                    src={`http://localhost:5000/${img}`}
+                    src={img}        // ✅ FIXED
                     className="h-16 w-full object-cover rounded"
                     alt="facility"
                   />
@@ -85,7 +85,6 @@ export default function Facilities() {
             </div>
           </motion.div>
         ))}
-
       </div>
     </div>
   );
